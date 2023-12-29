@@ -1,4 +1,6 @@
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -30,8 +32,11 @@ public class Main {
 				String title = sc.nextLine();
 				System.out.print("내용 : ");
 				String body = sc.nextLine();
-
-				Article article = new Article(id, title, body);
+				Date d = new Date();
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				String date = sdf.format(d);
+				
+				Article article = new Article(id, title, body, date);
 				articles.add(article);
 
 				System.out.printf("%d번 글이 생성 되었습니다.\n", id);
@@ -44,20 +49,16 @@ public class Main {
 					System.out.println("  번호  /  제목  ");
 					for (int i = articles.size() - 1; i >= 0; i--) {
 						Article article = articles.get(i);
-						System.out.printf("  %4d  /   %s  \n", article.getId(), article.getTitle());
+						System.out.printf("  %2d  /   %s  \n", article.getId(), article.getTitle());
 					}
 				}
 
-			} else if (cmd.startsWith("article detail ")) {
+			} else if (cmd.startsWith("article detail")) {
 
 				String[] cmdDiv = cmd.split(" ");
-				System.out.println(cmdDiv[0]);
-				System.out.println(cmdDiv[1]);
-				System.out.println(cmdDiv[2]);
 
 				int id = 0;
 
-				// article detail 1 => "1" => 1
 				try {
 					id = Integer.parseInt(cmdDiv[2]);
 				} catch (Exception e) {
@@ -65,7 +66,26 @@ public class Main {
 					continue;
 				}
 
-				System.out.printf("%d번 게시글은 없습니다\n", id);
+				boolean found = false;
+
+				for (int i = 0; i < articles.size(); i++) {
+					Article article = articles.get(i);
+					if (article.getId() == id) {
+						found = true;
+						break;
+					}
+				}
+
+				if (found == false) {
+					System.out.printf("%d번 게시글은 없습니다\n", id);
+				} else {
+					Article articls = articles.get(id -1);
+					System.out.println("번호 : " + articls.getId());
+					System.out.println("날짜 : " + articls.getDate());
+					System.out.println("제목 : " + articls.getTitle());
+					System.out.println("내용 : " + articls.getBody());
+				}
+			
 			} else {
 				System.out.println("사용할 수 없는 명령어입니다");
 			}
@@ -81,11 +101,21 @@ class Article {
 	private int id;
 	private String title;
 	private String body;
+	private String date;
 
-	public Article(int id, String title, String body) {
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public Article(int id, String title, String body, String date) {
 		this.id = id;
 		this.title = title;
 		this.body = body;
+		this.date = date;
 	}
 
 	public int getId() {
